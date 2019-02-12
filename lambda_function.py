@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import time
+import urllib.parse
 
 # Login Function
 def login_function(memno, password):
@@ -115,259 +116,278 @@ def book_golf(cookie_info, book_eventid, book_rowid):
     soup = bs(res.text, 'html.parser')
     
     auto_book_form = soup.find('form', attrs={'name': 'auto_book'})
-    auto_book_form_data = {
-        'doAction': 'FAST_BOOK',
-        'booking_event_id': book_eventid,
-        'booking_row_id': book_rowid,
-        'booking_group_id': '',
-        'times_free': 4,
-        'times_free': 4,
-        'bookLinkedEvent': 'n',
-        'numberOfHoles': '',
-        'backNineId': '',
-        'group_name': '',
-        'time': '',
-        'title': '',
-        'freeRecord.id': 0,
-        'freeRecord.0.booking_record_id': 0,
-        'freeRecord.0.booking_record_x_index': 0,
-        'freeRecord.0.membership_number': '',
-        'freeRecord.0.full_name': '',
-        'freeRecord.0.competition_round_type': '',
-        'freeRecord.id': 1,
-        'freeRecord.1.booking_record_id': 1,
-        'freeRecord.1.booking_record_x_index': 1,
-        'freeRecord.1.membership_number': '',
-        'freeRecord.1.full_name': '',
-        'freeRecord.1.handicap': '',
-        'freeRecord.1.gender_code': '',
-        'freeRecord.1.golflink_number': '',
-        'freeRecord.1.competition_round_type': '',
-        'freeRecord.id': 2,
-        'freeRecord.2.booking_record_id': 2,
-        'freeRecord.2.booking_record_x_index': 2,
-        'freeRecord.2.membership_number': '',
-        'freeRecord.2.full_name': '',
-        'freeRecord.2.handicap': '',
-        'freeRecord.2.gender_code': '',
-        'freeRecord.2.golflink_number': '',
-        'freeRecord.2.competition_round_type': '',
-        'freeRecord.id': 3,
-        'freeRecord.3.booking_record_id': 3,
-        'freeRecord.3.booking_record_x_index': 3,
-        'freeRecord.3.membership_number': '',
-        'freeRecord.3.full_name': '',
-        'freeRecord.3.handicap': '',
-        'freeRecord.3.gender_code': '',
-        'freeRecord.3.golflink_number': '',
-        'freeRecord.3.competition_round_type': '',
-    }
-    
+
+    bdgc_auto_book_url = "https://www.bdgc.com.au/members/bookings/open/MakeBooking.msp?"
+    bdgc_auto_book_url += "doAction=FAST_BOOK&booking_event_id=" + book_eventid + "&booking_row_id=" + book_rowid
+    bdgc_auto_book_url += "&booking_group_id=&times_free="
+
     default_playing_group_form = soup.find('form', attrs={'name': 'defaultPlayingGroupForm'})
     
     # BookLinkedEvent
     book_linked_event = default_playing_group_form.find('input', attrs={'name': 'bookLinkedEvent'})
+    book_linked_event_val = {'bookLinkedEvent': ''}
     if book_linked_event:
         if book_linked_event['checked']:
-            auto_book_form_data['bookLinkedEvent'] = 'y'
+            book_linked_event_val['bookLinkedEvent'] = 'y'
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_linked_event_val)
     
     # NumberOfHoles
     number_of_holes = default_playing_group_form.find('input', attrs={'name': 'numberOfHoles'})
+    book_number_of_holes_val = {'numberOfHoles': ''}
     if number_of_holes:
         number_of_holes_val = number_of_holes.get('value')
         if number_of_holes_val:
-            auto_book_form_data['numberOfHoles'] = number_of_holes_val
+            book_number_of_holes_val['numberOfHoles'] = number_of_holes_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_number_of_holes_val)
     
     # BackNineId
     back_nine_id = auto_book_form.find('input', attrs={'name': 'backNineId'})
+    book_back_nine_id_val = {'backNineId': ''}
     if back_nine_id:
         back_nine_id_val = back_nine_id.get('value')
         if back_nine_id_val:
-            auto_book_form_data['backNineId'] = back_nine_id_val
+            book_back_nine_id_val['backNineId'] = back_nine_id_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_back_nine_id_val)
     
     # GroupName
     group_name = auto_book_form.find('input', attrs={'name': 'group_name'})
+    book_group_name_val = {'group_name': ''}
     if group_name:
         group_name_val = group_name.get('value')
         if group_name_val:
-            auto_book_form_data['group_name'] = group_name_val
+            book_group_name_val['group_name'] = group_name_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_group_name_val)
     
     # Time
     book_time = auto_book_form.find('input', attrs={'name': 'time'})
+    book_time_val = {'time': ''}
     if book_time:
-        book_time_val = book_time.get('value')
-        if book_time_val:
-            auto_book_form_data['time'] = book_time_val
+        time_val = book_time.get('value')
+        if time_val:
+            book_time_val['time'] = time_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_time_val)
     
     # Title
     book_title = auto_book_form.find('input', attrs={'name': 'title'})
+    book_title_val = {'title': ''}
     if book_title:
-        book_title_val = book_title.get('value')
-        if book_title_val:
-            auto_book_form_data['title'] = book_title_val
-    
+        title_val = book_title.get('value')
+        if title_val:
+            book_title_val['title'] = title_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_time_val)
+     
     ###### Record 0 ######
+    bdgc_auto_book_url += "&freeRecord.id=0&freeRecord.0.booking_record_id=0&freeRecord.0.booking_record_x_index=0"
     # freeRecord.0.membership_number
     freerecode_0_mem_num = auto_book_form.find('input', attrs={'name': 'freeRecord.0.membership_number'})
+    book_freerecode_0_mem_num_val = {'freeRecord.0.membership_numbe': ''}
     if freerecode_0_mem_num:
         freerecode_0_mem_num_val = freerecode_0_mem_num.get('value')
         if freerecode_0_mem_num_val:
-            auto_book_form_data['freeRecord.0.membership_number'] = freerecode_0_mem_num_val
+            book_freerecode_0_mem_num_val['freeRecord.0.membership_numbe'] = freerecode_0_mem_num_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_0_mem_num_val)
     
     # freeRecord.0.full_name
     freerecode_0_full_name = auto_book_form.find('input', attrs={'name': 'freeRecord.0.full_name'})
+    book_freerecode_0_full_name_val = {'freeRecord.0.full_name': ''}
     if freerecode_0_full_name:
         freerecode_0_full_name_val = freerecode_0_full_name.get('value')
-        if freerecode_0_mem_num_val:
-            auto_book_form_data['freeRecord.0.full_name'] = freerecode_0_full_name_val
+        if freerecode_0_full_name_val:
+            book_freerecode_0_full_name_val['freeRecord.0.full_name'] = freerecode_0_full_name_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_0_full_name_val)
     
     # freeRecord.0.competition_round_type
     freerecode_0_compe_round_type = auto_book_form.find('input', attrs={'name': 'freeRecord.0.competition_round_type'})
+    book_freerecode_0_compe_round_type_val = {'freeRecord.0.competition_round_type': ''}
     if freerecode_0_compe_round_type:
         freerecode_0_compe_round_type_val = freerecode_0_compe_round_type.get('value')
         if freerecode_0_compe_round_type_val:
-            auto_book_form_data['freeRecord.0.competition_round_type'] = freerecode_0_compe_round_type_val
+            book_freerecode_0_compe_round_type_val['freeRecord.0.competition_round_type'] = freerecode_0_compe_round_type_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_0_compe_round_type_val)
     
     ###### Record 1 ######
+    bdgc_auto_book_url += "&freeRecord.id=1&freeRecord.1.booking_record_id=1&freeRecord.1.booking_record_x_index=1"
     # freeRecord.1.membership_number
     freerecode_1_mem_num = auto_book_form.find('input', attrs={'name': 'freeRecord.1.membership_number'})
+    book_freerecode_1_membership_number_val = {'freeRecord.1.membership_number': ''}
     if freerecode_1_mem_num:
         freerecode_1_mem_num_val = freerecode_1_mem_num.get('value')
         if freerecode_1_mem_num_val:
-            auto_book_form_data['freeRecord.1.membership_number'] = freerecode_1_mem_num_val
+            book_freerecode_1_membership_number_val['freeRecord.1.membership_number'] = freerecode_1_mem_num_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_1_membership_number_val)
     
     # freeRecord.1.full_name
     freerecode_1_full_name = auto_book_form.find('input', attrs={'name': 'freeRecord.1.full_name'})
+    book_freerecode_1_full_name_val = {'freeRecord.1.full_name': ''}
     if freerecode_1_full_name:
         freerecode_1_full_name_val = freerecode_1_full_name.get('value')
         if freerecode_1_full_name_val:
-            auto_book_form_data['freeRecord.1.full_name'] = freerecode_1_full_name_val
+            book_freerecode_1_full_name_val['freeRecord.1.full_name'] = freerecode_1_full_name_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_1_full_name_val)
     
     # freeRecord.1.handicap
     freerecode_1_handicap = auto_book_form.find('input', attrs={'name': 'freeRecord.1.handicap'})
+    book_freerecode_1_handicap_val = {'freeRecord.1.handicap': ''}
     if freerecode_1_handicap:
         freerecode_1_handicap_val = freerecode_1_handicap.get('value')
         if freerecode_1_handicap_val:
-            auto_book_form_data['freeRecord.1.handicap'] = freerecode_1_handicap_val
+            book_freerecode_1_handicap_val['freeRecord.1.full_name'] = freerecode_1_handicap_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_1_handicap_val)
     
     # freeRecord.1.gender_code
     freerecode_1_gender_code = auto_book_form.find('input', attrs={'name': 'freeRecord.1.gender_code'})
+    book_freerecode_1_gender_code_val = {'freeRecord.1.gender_code': ''}
     if freerecode_1_gender_code:
         freerecode_1_gender_code_val = freerecode_1_gender_code.get('value')
         if freerecode_1_gender_code_val:
-            auto_book_form_data['freeRecord.1.gender_code'] = freerecode_1_gender_code_val
+            book_freerecode_1_gender_code_val['freeRecord.1.gender_code'] = freerecode_1_gender_code_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_1_gender_code_val)
     
     # freeRecord.1.golflink_number
     freerecode_1_golflink_number = auto_book_form.find('input', attrs={'name': 'freeRecord.1.golflink_number'})
+    book_freerecode_1_golflink_number_val = {'freeRecord.1.golflink_number': ''}
     if freerecode_1_golflink_number:
         freerecode_1_golflink_number_val = freerecode_1_golflink_number.get('value')
         if freerecode_1_golflink_number_val:
-            auto_book_form_data['freeRecord.1.golflink_number'] = freerecode_1_golflink_number_val
+            book_freerecode_1_golflink_number_val['freeRecord.1.golflink_number'] = freerecode_1_golflink_number_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_1_golflink_number_val)
     
     # freeRecord.1.competition_round_type
     freerecode_1_compe_round_type = auto_book_form.find('input', attrs={'name': 'freeRecord.1.competition_round_type'})
+    book_freerecode_1_competition_round_type_val = {'freeRecord.1.competition_round_type': ''}
     if freerecode_1_compe_round_type:
         freerecode_1_compe_round_type_val = freerecode_1_compe_round_type.get('value')
         if freerecode_1_compe_round_type_val:
-            auto_book_form_data['freeRecord.1.competition_round_type'] = freerecode_1_compe_round_type_val
+            book_freerecode_1_competition_round_type_val['freeRecord.1.competition_round_type'] = freerecode_1_compe_round_type_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_1_competition_round_type_val)
     
     ###### Record 2 ######
+    bdgc_auto_book_url += "&freeRecord.id=2&freeRecord.2.booking_record_id=2&freeRecord.2.booking_record_x_index=2"
     # freeRecord.2.membership_number
     freerecode_2_mem_num = auto_book_form.find('input', attrs={'name': 'freeRecord.2.membership_number'})
+    book_freerecode_2_membership_number_val = {'freeRecord.2.membership_number': ''}
     if freerecode_2_mem_num:
         freerecode_2_mem_num_val = freerecode_2_mem_num.get('value')
         if freerecode_2_mem_num_val:
-            auto_book_form_data['freeRecord.2.membership_number'] = freerecode_2_mem_num_val
+            book_freerecode_2_membership_number_val['freeRecord.2.membership_number'] = freerecode_2_mem_num_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_2_membership_number_val)
     
     # freeRecord.2.full_name
     freerecode_2_full_name = auto_book_form.find('input', attrs={'name': 'freeRecord.2.full_name'})
+    book_freerecode_2_full_name_val = {'freeRecord.2.full_name': ''}
     if freerecode_2_full_name:
         freerecode_2_full_name_val = freerecode_2_full_name.get('value')
         if freerecode_2_full_name_val:
-            auto_book_form_data['freeRecord.2.full_name'] = freerecode_2_full_name_val
+            book_freerecode_2_full_name_val['freeRecord.2.full_name'] = freerecode_2_full_name_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_2_full_name_val)
     
     # freeRecord.2.handicap
     freerecode_2_handicap = auto_book_form.find('input', attrs={'name': 'freeRecord.2.handicap'})
+    book_freerecode_2_handicap_val = {'freeRecord.2.handicap': ''}
     if freerecode_2_handicap:
         freerecode_2_handicap_val = freerecode_2_handicap.get('value')
         if freerecode_2_handicap_val:
-            auto_book_form_data['freeRecord.2.handicap'] = freerecode_2_handicap_val
+            book_freerecode_2_handicap_val['freeRecord.2.full_name'] = freerecode_2_handicap_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_2_handicap_val)
     
     # freeRecord.2.gender_code
     freerecode_2_gender_code = auto_book_form.find('input', attrs={'name': 'freeRecord.2.gender_code'})
+    book_freerecode_2_gender_code_val = {'freeRecord.2.gender_code': ''}
     if freerecode_2_gender_code:
         freerecode_2_gender_code_val = freerecode_2_gender_code.get('value')
         if freerecode_2_gender_code_val:
-            auto_book_form_data['freeRecord.2.gender_code'] = freerecode_2_gender_code_val
+            book_freerecode_2_gender_code_val['freeRecord.2.gender_code'] = freerecode_2_gender_code_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_2_gender_code_val)
     
     # freeRecord.2.golflink_number
     freerecode_2_golflink_number = auto_book_form.find('input', attrs={'name': 'freeRecord.2.golflink_number'})
+    book_freerecode_2_golflink_number_val = {'freeRecord.2.golflink_number': ''}
     if freerecode_2_golflink_number:
         freerecode_2_golflink_number_val = freerecode_2_golflink_number.get('value')
         if freerecode_2_golflink_number_val:
-            auto_book_form_data['freeRecord.2.golflink_number'] = freerecode_2_golflink_number_val
+            book_freerecode_2_golflink_number_val['freeRecord.2.golflink_number'] = freerecode_2_golflink_number_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_2_golflink_number_val)
     
     # freeRecord.2.competition_round_type
     freerecode_2_compe_round_type = auto_book_form.find('input', attrs={'name': 'freeRecord.2.competition_round_type'})
+    book_freerecode_2_competition_round_type_val = {'freeRecord.2.competition_round_type': ''}
     if freerecode_2_compe_round_type:
         freerecode_2_compe_round_type_val = freerecode_2_compe_round_type.get('value')
         if freerecode_2_compe_round_type_val:
-            auto_book_form_data['freeRecord.2.competition_round_type'] = freerecode_2_compe_round_type_val
-    
+            book_freerecode_2_competition_round_type_val['freeRecord.2.competition_round_type'] = freerecode_2_compe_round_type_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_2_competition_round_type_val)
+
     ###### Record 3 ######
+    bdgc_auto_book_url += "&freeRecord.id=3&freeRecord.3.booking_record_id=3&freeRecord.3.booking_record_x_index=3"
     # freeRecord.3.membership_number
     freerecode_3_mem_num = auto_book_form.find('input', attrs={'name': 'freeRecord.3.membership_number'})
+    book_freerecode_3_membership_number_val = {'freeRecord.3.membership_number': ''}
     if freerecode_3_mem_num:
         freerecode_3_mem_num_val = freerecode_3_mem_num.get('value')
         if freerecode_3_mem_num_val:
-            auto_book_form_data['freeRecord.3.membership_number'] = freerecode_3_mem_num_val
+            book_freerecode_3_membership_number_val['freeRecord.3.membership_number'] = freerecode_3_mem_num_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_3_membership_number_val)
     
     # freeRecord.3.full_name
     freerecode_3_full_name = auto_book_form.find('input', attrs={'name': 'freeRecord.3.full_name'})
+    book_freerecode_3_full_name_val = {'freeRecord.3.full_name': ''}
     if freerecode_3_full_name:
         freerecode_3_full_name_val = freerecode_3_full_name.get('value')
         if freerecode_3_full_name_val:
-            auto_book_form_data['freeRecord.3.full_name'] = freerecode_3_full_name_val
+            book_freerecode_3_full_name_val['freeRecord.3.full_name'] = freerecode_3_full_name_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_3_full_name_val)
     
     # freeRecord.3.handicap
     freerecode_3_handicap = auto_book_form.find('input', attrs={'name': 'freeRecord.3.handicap'})
+    book_freerecode_3_handicap_val = {'freeRecord.3.handicap': ''}
     if freerecode_3_handicap:
         freerecode_3_handicap_val = freerecode_3_handicap.get('value')
         if freerecode_3_handicap_val:
-            auto_book_form_data['freeRecord.3.handicap'] = freerecode_3_handicap_val
+            book_freerecode_3_handicap_val['freeRecord.3.full_name'] = freerecode_3_handicap_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_3_handicap_val)
     
     # freeRecord.3.gender_code
     freerecode_3_gender_code = auto_book_form.find('input', attrs={'name': 'freeRecord.3.gender_code'})
+    book_freerecode_3_gender_code_val = {'freeRecord.3.gender_code': ''}
     if freerecode_3_gender_code:
         freerecode_3_gender_code_val = freerecode_3_gender_code.get('value')
         if freerecode_3_gender_code_val:
-            auto_book_form_data['freeRecord.3.gender_code'] = freerecode_3_gender_code_val
+            book_freerecode_3_gender_code_val['freeRecord.3.gender_code'] = freerecode_3_gender_code_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_3_gender_code_val)
     
     # freeRecord.3.golflink_number
     freerecode_3_golflink_number = auto_book_form.find('input', attrs={'name': 'freeRecord.3.golflink_number'})
+    book_freerecode_3_golflink_number_val = {'freeRecord.3.golflink_number': ''}
     if freerecode_3_golflink_number:
         freerecode_3_golflink_number_val = freerecode_3_golflink_number.get('value')
         if freerecode_3_golflink_number_val:
-            auto_book_form_data['freeRecord.3.golflink_number'] = freerecode_3_golflink_number_val
+            book_freerecode_3_golflink_number_val['freeRecord.3.golflink_number'] = freerecode_3_golflink_number_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_3_golflink_number_val)
     
     # freeRecord.3.competition_round_type
     freerecode_3_compe_round_type = auto_book_form.find('input', attrs={'name': 'freeRecord.3.competition_round_type'})
+    book_freerecode_3_competition_round_type_val = {'freeRecord.3.competition_round_type': ''}
     if freerecode_3_compe_round_type:
         freerecode_3_compe_round_type_val = freerecode_3_compe_round_type.get('value')
         if freerecode_3_compe_round_type_val:
-            auto_book_form_data['freeRecord.3.competition_round_type'] = freerecode_3_compe_round_type_val
-    
+            book_freerecode_3_competition_round_type_val['freeRecord.3.competition_round_type'] = freerecode_3_compe_round_type_val
+    bdgc_auto_book_url += "&" + urllib.parse.urlencode(book_freerecode_3_competition_round_type_val)
+
     response_str = ''
-    bdgc_auto_book_url = "https://www.bdgc.com.au/members/bookings/open/MakeBooking.msp"
-    res = requests.get(url=bdgc_auto_book_url, headers=bdgc_header_data, data=auto_book_form_data)
-    if res.status_code == 200:
-        soup = bs(res.text, 'html.parser')
-        members_content = soup.find('div', attrs={'class': 'members-content'})
-        error_contains = members_content.find('div', attrs={'class': 'errorContain'})
-        for error_item in error_contains:
-            error_name = error_item.find('div', attrs={'class': 'errorName'})
-            error_reason = error_item.find('div', attrs={'class': 'errorReason'})
-            response_str += error_name.text + ': ' + error_reason.text + '. '
+    bdgc_block_book_url = "https://www.bdgc.com.au/members/Ajax?doAction=lockResource&bookingRowId=" + book_rowid + "&text"
+    block_res = requests.get(url=bdgc_block_book_url, headers=bdgc_header_data)
+    if block_res.status_code == 200:
+        if block_res.text == '4':
+            book_res = requests.get(url=bdgc_auto_book_url, headers=bdgc_header_data)
+            if book_res.status_code == 200:
+                book_soup = bs(book_res.text, 'html.parser')
+                error_contain = book_soup.find('div', attrs={'class': 'errorContain'})
+                if error_contain:
+                    error_items = error_contain.find_all('div', attrs={'class': 'errorItem'})
+                    for error_item in error_items:
+                        error_name = error_item.find('div', attrs={'class': 'errorName'})
+                        error_reason = error_item.find('div', attrs={'class': 'errorReason'})
+                        response_str += error_name.text.strip() + ': ' + error_reason.text.strip() + '. '
     
     return response_str
     
@@ -376,16 +396,26 @@ def book_handler(event, context):
     cookie_info = login_function(event['memno'], event['password'])
     book_eventid = get_book_eventid(cookie_info, event['comments'])
     
+    loop_count = 0
     while book_eventid == '':
         book_eventid = get_book_eventid(cookie_info, event['comments'])
-        time.sleep(30)
+        loop_count = loop_count + 1
+        if loop_count >= 5:
+            break
+        time.sleep(60)
     
     if book_eventid:
         book_rowid = get_book_rowid(cookie_info, book_eventid)
         
     result = ''
+    book_loop_count = 0
     if book_rowid:
-        result = book_golf(cookie_info, book_eventid, book_rowid)
+        while result == '':
+            result = book_golf(cookie_info, book_eventid, book_rowid)
+            book_loop_count = book_loop_count + 1
+            if book_loop_count >= 5:
+                break
+            time.sleep(60)
        
     #now_date = datetime.now()
     #now_date_str = now_date.strftime('%a %d %b %I:%M:%S %p')

@@ -12,5 +12,8 @@ cron(0 11 ? * FRI *)
 
 ## ChangeLog
 
+1.1 2019/02/12
+	Fix Book Function
+
 1.0 2019/02/11
 	Initial Production Versioin
