@@ -1,8 +1,10 @@
 {
-    "memno": "",
-    "password": "",
-    "comments": [
-      "",
-      "Morning"
-    ]
+  "name": "",
+  "after_days": "8",
+  "memno": "",
+  "password": "",
+  "comments": [
+    "",
+    "Morning"
+  ]
 }

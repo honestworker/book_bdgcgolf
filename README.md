@@ -12,6 +12,9 @@ cron(0 11 ? * FRI *)
 
 ## ChangeLog
 
+1.2 2019/02/14
+	Add "Confirm Booking" function
+
 1.1 2019/02/12
 	Fix Book Function
 
