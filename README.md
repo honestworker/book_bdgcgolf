@@ -12,11 +12,14 @@ cron(0 11 ? * FRI *)
 
 ## ChangeLog
 
+1.3 2019/02/15
+	If the row will be blocked, then the script will try to book at the next row.
+
 1.2 2019/02/14
-	Add "Confirm Booking" function
+	Add "Confirm Booking" function.
 
 1.1 2019/02/12
-	Fix Book Function
+	Fix Book Function.
 
 1.0 2019/02/11
-	Initial Production Versioin
+	Initial Production Versioin.
