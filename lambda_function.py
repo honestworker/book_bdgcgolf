@@ -493,10 +493,10 @@ def book_golf(cookie_info, book_eventid, book_rowid):
 def book_handler(event, context):
     # TODO implement
     os.environ["TZ"] = 'Australia/NSW'
-    if event['after_days'] is None:
+    if 'after_days' not in event:
         after_days = '8'
     else:
-        after_days = '' + event['after_days']
+        after_days = event['after_days']
     
     cookie_info = login_function(event['memno'], event['password'])
     book_eventid = get_book_eventid(cookie_info, after_days, event['comments'])
