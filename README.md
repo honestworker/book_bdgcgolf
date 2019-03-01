@@ -12,6 +12,9 @@ cron(0 11 ? * FRI *)
 
 ## ChangeLog
 
+1.4 2019/03/01
+	Fix Some Bugs.
+
 1.3 2019/02/15
 	If the row will be blocked, then the script will try to book at the next row.
 
