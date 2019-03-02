@@ -572,6 +572,7 @@ def book_handler(event, context):
     
     local_zone = dateutil.tz.gettz(os.environ["TZ"])
     date_after_eight_days = datetime.now(tz=local_zone)
+    now_date = date_after_eight_days.strftime('%a %d %b %H:%M:%S')
     for day_no in range(0, int(after_days)):
         date_after_eight_days = date_after_eight_days + relativedelta(days=1)
     now_second = 60 - int(date_after_eight_days.strftime('%S'))
@@ -604,12 +605,16 @@ def book_handler(event, context):
             if book_loop_count >= 20:
                 break
             time.sleep(3)
+    
     result = ''
     if book_row_result['row_id']:
         result = book_golf(cookie_info, book_eventid, book_row_result['row_id'])
-        book_header_str = "\nName: " + event['name'] + ", Date: " + next_book_date1 + ", Time: " + book_row_result['row_time'] + ", Booking Result(" + next_book_date1 +"):\n"
+        book_header_str = "\nName: " + event['name'] + ", Date: " + next_book_date1 + ", Time: " + book_row_result['row_time'] + ", Booking Result(" + now_date +"):\n"
     else:
-        book_header_str = "\nName: " + event['name'] + ", Date: " + next_book_date1 + ", Booking Failed(" + next_book_date1 +"):\n"
+        if book_eventid:
+            book_header_str = "\nName: " + event['name'] + ", Date: " + next_book_date1 + ", Booking Failed(" + now_date +"):\n"
+        else:
+            book_header_str = "\nName: " + event['name'] + ", Date: " + next_book_date1 + ", Booking Failed(" + now_date +": No Open Day):\n"
     
     result = book_header_str + result
     
