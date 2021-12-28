@@ -2,13 +2,18 @@
 Booking(AWS Lambda) of BDGC Golf
 https://www.bdgc.com.au/
 
+
 ## Description
 Please read this reference link.
-https://beomi.github.io/2018/11/30/using-aws-lambda-layers-on-python3/
+https://towardsdatascience.com/introduction-to-amazon-lambda-layers-and-boto3-using-python3-39bd390add17
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
+https://medium.com/the-cloud-architect/getting-started-with-aws-lambda-layers-for-python-6e10b1f9a5d
+
 
 ## AWS CloudWatch Events
 cron(0 11 ? * TUE *)
 cron(0 11 ? * FRI *)
+
 
 ## ChangeLog
 
