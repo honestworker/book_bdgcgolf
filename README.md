@@ -4,10 +4,10 @@ https://www.bdgc.com.au/
 
 
 ## Description
-Please read this reference link.
-https://towardsdatascience.com/introduction-to-amazon-lambda-layers-and-boto3-using-python3-39bd390add17
-https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
-https://medium.com/the-cloud-architect/getting-started-with-aws-lambda-layers-for-python-6e10b1f9a5d
+Please read this reference link.  
+https://towardsdatascience.com/introduction-to-amazon-lambda-layers-and-boto3-using-python3-39bd390add17  
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html  
+https://medium.com/the-cloud-architect/getting-started-with-aws-lambda-layers-for-python-6e10b1f9a5d  
 
 
 ## AWS CloudWatch Events
